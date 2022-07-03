@@ -1,33 +1,35 @@
 package io.github.natanaeldeveloper.controllers;
 
-import javax.persistence.EntityManager;
-
 import io.github.natanaeldeveloper.dao.BookDAO;
 import io.github.natanaeldeveloper.models.Book;
 import io.github.natanaeldeveloper.utils.JPAConnection;
 
-public class BookController {
+public class BookController extends Controller{
 	
 	private BookDAO bookDAO;
 	public Book book;
 	
 	public BookController () {
 		this.bookDAO = new BookDAO(JPAConnection.getEntityManager());
+		this.book = new Book();
 	}
 
-	public Book createBook(String title, String author) {
-		
-		this.book = new Book();
-		this.book.setTitle(title);
-		this.book.setAuthor(author);
+	public Book createBook(String title, String author) throws Exception {
 		
 		try {
+			if(title.isEmpty())
+				throw new Exception("O campo Título não foi informado");
+			
+			if(author.isEmpty())
+				throw new Exception("O campo Author não foi informado");
+			
+			this.book.setTitle(title);
+			this.book.setAuthor(author);
+			
 			return this.bookDAO.create(this.book);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
-		return null;
 	}
 	
 	public Book getBook(long id) {
